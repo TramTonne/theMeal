@@ -56,12 +56,12 @@ export default function OptionPage() {
   };
 
   return (
-    <main className="min-h-screen bg-white px-6 py-4 flex flex-col">
+    <main className="min-h-screen bg-[#f5fff9] px-6 py-4 flex flex-col">
       {/* Top Bar */}
       <div className="flex justify-between items-center mb-12">
         <div className="flex items-center gap-3">
           <Image src="/images/logo.png" alt="TheMEAL logo" width={100} height={100} />
-          <h1 className="text-2xl font-lexend text-green-900">TheMEAL</h1>
+          <h1 className="text-2xl font-lexend text-green-900  relative top-[15px] left-[-15px]">TheMEAL</h1>
         </div>
         <div className="flex items-center gap-4">
           <Link href="/">
