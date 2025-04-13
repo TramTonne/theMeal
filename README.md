@@ -1,5 +1,3 @@
-Sure! Here's a clean and well-formatted version of your content for `README.md` on GitHub, using proper Markdown syntax:
-
 ```markdown
 # TheMEAL
 
