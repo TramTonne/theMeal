@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -5,7 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export default function OptionPage() {
-  const [selected, setSelected] = useState(null); // breakfast / lunch / dinner / null
+  const [selected, setSelected] = useState(null);
   const [meals, setMeals] = useState({
     breakfast: '',
     lunch: '',
@@ -34,30 +35,8 @@ export default function OptionPage() {
     }
   }, []);
 
-  const recipes = {
-    breakfast: {
-      title: 'Pancake Ingredients',
-      content: `· Flour\n· Baking powder\n· Sugar\n· Salt\n· Milk and butter\n· Egg`,
-      instructions: `How to Make Pancakes From Scratch\n1. Sift the dry ingredients together.\n2. Make a well, then add the wet ingredients. Stir to combine.`,
-      image: '/images/pancakes.jpg',
-    },
-    lunch: {
-      title: 'Chicken Soup Recipe',
-      content: `· Chicken\n· Noodles\n· Carrots\n· Celery\n· Onion`,
-      instructions: `Boil chicken. Add veggies & noodles. Simmer 20 mins.`,
-      image: '/images/soup.jpg',
-    },
-    dinner: {
-      title: 'Salad + Chicken',
-      content: `· Romaine lettuce\n· Grilled chicken\n· Caesar dressing\n· Croutons`,
-      instructions: `Grill chicken, mix with salad & dressing.`,
-      image: '/images/salad.jpg',
-    },
-  };
-
   return (
     <main className="min-h-screen bg-white px-6 py-4 flex flex-col">
-      {/* Top Bar */}
       <div className="flex justify-between items-center mb-12">
         <div className="flex items-center gap-3">
           <Image src="/images/logo.png" alt="TheMEAL logo" width={100} height={100} />
@@ -73,20 +52,17 @@ export default function OptionPage() {
         </div>
       </div>
 
-      {/* CONDITIONAL LAYOUT */}
       {selected ? (
         <div className="grid md:grid-cols-2 gap-6">
-          {/* Selected Meal Card */}
           <div className="bg-[#88d499] rounded-3xl p-6 flex flex-col items-center">
             <h2 className="text-xl font-semibold text-green-900 mb-4 capitalize">{selected}:</h2>
             <div className="bg-white rounded-xl p-4 w-full text-center mb-4 shadow min-h-[80px] flex items-center justify-center">
-              {meals[selected]}
+              {meals[selected] || 'Loading...'}
             </div>
             <h3 className="text-lg font-semibold text-green-900 mb-2">Nutrients:</h3>
             <div className="bg-white rounded-xl p-4 w-full h-24 shadow"></div>
           </div>
 
-          {/* Recipe Box */}
           <div className="relative bg-white rounded-3xl border-2 border-green-900 p-6">
             <button
               onClick={() => setSelected(null)}
@@ -96,21 +72,19 @@ export default function OptionPage() {
             </button>
 
             <h2 className="text-2xl font-bold text-green-900 underline mb-4">RECIPE:</h2>
-            <p className="whitespace-pre-line text-green-800 mb-4">{recipes[selected].title}</p>
-            <p className="whitespace-pre-line text-green-800 mb-4">{recipes[selected].content}</p>
-            <p className="whitespace-pre-line text-green-800">{recipes[selected].instructions}</p>
+            <p className="whitespace-pre-line text-green-800 mb-4">Name: {mealNames[selected + 'Name']}</p>
+            <p className="whitespace-pre-line text-green-800 mb-4">{meals[selected]}</p>
+            <p className="whitespace-pre-line text-green-800">(Recipe steps will go here)</p>
 
             <div className="mt-4 rounded-xl overflow-hidden">
-              <Image src={recipes[selected].image} alt="Recipe" width={400} height={300} className="rounded-xl" />
+              <Image src={`/images/${selected}.jpg`} alt="Recipe" width={400} height={300} className="rounded-xl" />
             </div>
           </div>
         </div>
       ) : (
-        // Default 3-Meal Grid
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {['breakfast', 'lunch', 'dinner'].map((type) => (
             <div key={type} className="flex flex-col items-center gap-4">
-              {/* Card */}
               <button
                 onClick={() => setSelected(type)}
                 className="bg-[#88d499] rounded-3xl p-6 flex flex-col items-center text-left cursor-pointer 
@@ -118,13 +92,11 @@ export default function OptionPage() {
               >
                 <h2 className="text-xl font-semibold text-green-900 mb-4 capitalize">{type}:</h2>
                 <div className="bg-white rounded-xl p-4 w-full text-center mb-4 shadow min-h-[80px] flex items-center justify-center">
-                  {mealNames[`${type}Name`] || meals[type] || 'Loading...'}
+                  {mealNames[type + 'Name'] || meals[type] || 'Loading...'}
                 </div>
                 <h3 className="text-lg font-semibold text-green-900 mb-2">Nutrients:</h3>
                 <div className="bg-white rounded-xl p-4 w-full h-24 shadow"></div>
               </button>
-
-              {/* Re-generate button (outside the box) */}
               <button
                 onClick={() => alert('TODO: Hook generateMeal logic')}
                 className="bg-[#8b61c2] text-white px-6 py-2 rounded-full shadow hover:bg-purple-700 w-full"

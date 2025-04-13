@@ -166,6 +166,12 @@ Do not include any extra text, numbering outside these lists, or explanations—
   const lunchName     = extractName(lunchPart);
   const dinnerName    = extractName(dinnerPart);
 
+  console.log('Generated meal names:', {
+    breakfastName,
+    lunchName,
+    dinnerName
+  });
+
   res.status(200).json({
     menu: message,
     breakfast: breakfastPart,
@@ -176,3 +182,4 @@ Do not include any extra text, numbering outside these lists, or explanations—
     dinnerName
   });
 }
+
