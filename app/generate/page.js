@@ -73,7 +73,7 @@ export default function GeneratePage() {
       <div className="flex justify-between items-center mb-12">
         <div className="flex items-center gap-3">
           <Image src="/images/logo.png" alt="TheMEAL logo" width={100} height={100} />
-          <h1 className="text-2xl font-lexend text-green-900">TheMEAL</h1>
+          <h1 className="text-2xl font-lexend text-green-900 relative top-[15px] left-[-15px]">TheMEAL</h1>
         </div>
         <div className="flex items-center gap-4">
           <Link href="/">
@@ -119,11 +119,11 @@ export default function GeneratePage() {
             <div className="flex gap-4">
               <div className="w-1/2">
                 <label className="font-semibold">Height:</label>
-                <input name="height" value={form.height} type="text" onChange={handleChange} placeholder="Enter your height" className="w-full rounded-xl p-3 mt-1 bg-white" />
+                <input name="height" value={form.height} type="text" onChange={handleChange} placeholder="Enter your height (cm)" className="w-full rounded-xl p-3 mt-1 bg-white" />
               </div>
               <div className="w-1/2">
                 <label className="font-semibold">Weight:</label>
-                <input name="weight" value={form.weight} type="text" onChange={handleChange} placeholder="Enter your weight" className="w-full rounded-xl p-3 mt-1 bg-white" />
+                <input name="weight" value={form.weight} type="text" onChange={handleChange} placeholder="Enter your weight (kg)" className="w-full rounded-xl p-3 mt-1 bg-white" />
               </div>
             </div>
 
@@ -165,6 +165,7 @@ export default function GeneratePage() {
                 <option>None</option>
                 <option>Diabetes</option>
                 <option>High Blood Pressure</option>
+                <option>Other (Mention below)</option>
               </select>
             </div>
 

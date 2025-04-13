@@ -22,11 +22,18 @@ export default function OptionPage() {
     lunch: { ingredients: [], recipe: [] },
     dinner: { ingredients: [], recipe: [] },
   });
+  const [mealNutrients, setMealNutrients] = useState({
+    breakfast: { calories: '', protein: '', fat: '', carbs: '' },
+    lunch: { calories: '', protein: '', fat: '', carbs: '' },
+    dinner: { calories: '', protein: '', fat: '', carbs: '' },
+  });
+  
 
   useEffect(() => {
     const stored = localStorage.getItem('mealData');
     if (stored) {
       const parsed = JSON.parse(stored);
+      console.log(parsed);
       setMeals({
         breakfast: parsed.breakfast,
         lunch: parsed.lunch,
@@ -44,6 +51,28 @@ export default function OptionPage() {
         lunch: { recipe: parsed.lunch.split('\n'), ingredients: [] },
         dinner: { recipe: parsed.dinner.split('\n'), ingredients: [] },
       });
+      // Also set nutrients
+      setMealNutrients({
+        breakfast: {
+          calories: parsed.breakfastCalories,
+          protein: parsed.breakfastProtein,
+          fat: parsed.breakfastFat,
+          carbs: parsed.breakfastCarbs,
+        },
+        lunch: {
+          calories: parsed.lunchCalories,
+          protein: parsed.lunchProtein,
+          fat: parsed.lunchFat,
+          carbs: parsed.lunchCarbs,
+        },
+        dinner: {
+          calories: parsed.dinnerCalories,
+          protein: parsed.dinnerProtein,
+          fat: parsed.dinnerFat,
+          carbs: parsed.dinnerCarbs,
+        },
+      });
+
     }
   }, []);
 
@@ -71,11 +100,17 @@ export default function OptionPage() {
           {/* Selected Meal Card */}
           <div className="bg-[#88d499] rounded-3xl p-6 flex flex-col items-center w-full max-w-sm">
             <h2 className="text-xl font-semibold text-green-900 mb-4 capitalize">{selected}:</h2>
-            <div className="bg-white rounded-xl p-4 w-full text-center mb-4 shadow min-h-[80px] flex items-center justify-center">
-              {meals[selected] || 'Loading...'}
+            <div className="bg-white text-gray-700  rounded-xl p-4 w-full text-center mb-4 shadow min-h-[80px] flex items-center justify-center">
+            {mealNames[selected + 'Name']}
             </div>
             <h3 className="text-lg font-semibold text-green-900 mb-2">Nutrients:</h3>
-            <div className="bg-white rounded-xl p-4 w-full h-24 shadow"></div>
+            <div className="bg-white rounded-xl p-4 w-full shadow text-sm text-green-900">
+              <p>Calories: {mealNutrients[selected]?.calories || 'N/A'} </p>
+              <p>Protein: {mealNutrients[selected]?.protein || 'N/A'} </p>
+              <p>Fat: {mealNutrients[selected]?.fat || 'N/A'} </p>
+              <p>Carbs: {mealNutrients[selected]?.carbs || 'N/A'} </p>
+            </div>
+
           </div>
 
           {/* Recipe Box */}
@@ -91,10 +126,6 @@ export default function OptionPage() {
             <p className="text-green-800 mb-2 font-semibold">{mealNames[selected + 'Name']}</p>
             <p className="whitespace-pre-line text-green-800 text-sm mb-2">{mealRecipes[selected].recipe.join('\n')}</p>
             <p className="whitespace-pre-line text-green-800 text-sm">{mealRecipes[selected].ingredients.join(', ')}</p>
-
-            <div className="mt-4 rounded-xl overflow-hidden">
-              <Image src="/images/placeholder.png" alt="Recipe" width={300} height={200} className="rounded-xl" />
-            </div>
           </div>
         </div>
       ) : (
@@ -113,7 +144,10 @@ export default function OptionPage() {
                   {mealNames[`${type}Name`] || meals[type] || 'Loading...'}
                 </div>
                 <h3 className="text-lg font-semibold text-green-900 mb-2">Nutrients:</h3>
-                <div className="bg-white text-gray-950 rounded-xl p-4 w-full h-24 shadow"></div>
+                <div className="bg-white text-gray-700 rounded-xl p-4 w-full h-24 shadow">
+                  <p>Calories: {mealNutrients[type]?.calories || 'N/A'} </p>
+                  <p>Protein: {mealNutrients[type]?.protein || 'N/A'} </p>
+                </div>
               </button>
 
               {/* Re-generate button (outside the box) */}
