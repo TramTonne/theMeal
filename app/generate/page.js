@@ -37,12 +37,24 @@ export default function GeneratePage() {
       const data = await res.json();
   
       localStorage.setItem('mealData', JSON.stringify({
-        breakfast: data.breakfastRecipe.join('\n'),
-        lunch: data.lunchRecipe.join('\n'),
-        dinner: data.dinnerRecipe.join('\n'),
+        breakfast: data.breakfastRecipe,
+        lunch: data.lunchRecipe,
+        dinner: data.dinnerRecipe,
         breakfastName: data.breakfastName,
         lunchName: data.lunchName,
         dinnerName: data.dinnerName,
+        breakfastCalories: data.breakfastCalories,
+        lunchCalories: data.lunchCalories,
+        dinnerCalories: data.dinnerCalories,
+        breakfastProtein: data.breakfastProtein,
+        lunchProtein: data.lunchProtein,
+        dinnerProtein: data.dinnerProtein,
+        breakfastFat: data.breakfastFat,
+        lunchFat: data.lunchFat,
+        dinnerFat: data.dinnerFat,
+        breakfastCarbs: data.breakfastCarbs,
+        lunchCarbs: data.lunchCarbs,
+        dinnerCarbs: data.dinnerCarbs,
       }));
   
       router.push('/option');
