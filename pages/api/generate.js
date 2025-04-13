@@ -68,7 +68,7 @@ export default async function handler(req, res) {
   const totalFat     = Math.round((targetCalories * 0.25) / 9);
   const totalCarbs   = Math.round((targetCalories * 0.50) / 4);
 
-  // Build Prompt for the AI
+  // Build prompt for the AI
   const prompt = `
 You are a nutritionist. Create a 1‑day meal plan with only Breakfast, Lunch, and Dinner that meets:
 - Daily Calories: ${targetCalories} kcal
@@ -127,7 +127,7 @@ Recipe:
 2. <Step 2>
 3. ...
 
-Do not include any extra text, numbering outside these lists, or explanations—just these three sections.
+Do not include any extra text, numbering outside these lists, or explanations—just these seven sections.
   `;
 
   // Call OpenAI API
