@@ -1,69 +1,113 @@
 'use client';
-
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-
-<Link href="/generate" className="text-blue-500 underline">
-  Go to Generate Page
-</Link>
-
-import { useState } from 'react';
+import Image from 'next/image';
 
 export default function GeneratePage() {
-  const [form, setForm] = useState({
-    diet: '', calories: '', allergies: '', favorites: '', notes: ''
-  });
-  const [menu, setMenu] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    const res = await fetch('/api/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form)
-    });
-    const data = await res.json();
-    setMenu(data.menu);
-    setLoading(false);
-  };
-
+  const router = useRouter();
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen bg-gray-100 py-6">
-      <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-lg">
-        <h1 className="text-3xl font-bold mb-8 text-center text-blue-600">One Day Menu Generator 🍽️</h1>
-
-        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-          {['diet', 'calories', 'allergies', 'favorites', 'notes'].map((key) => (
-            <div key={key} className="flex flex-col">
-              <label htmlFor={key} className="text-lg font-medium text-gray-700">{key.charAt(0).toUpperCase() + key.slice(1)}</label>
-              <input
-                id={key}
-                name={key}
-                placeholder={key}
-                value={form[key]}
-                onChange={handleChange}
-                className="mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                style={{ color: 'black' }}
-              />
-            </div>
-          ))}
-          
-          <button 
-            type="submit" 
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-md transition-colors"
-          >
-            {loading ? 'Generating...' : 'Generate Menu'}
-          </button>
-        </form>
-
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Your Generated Menu</h2>
-          <pre className="bg-gray-50 rounded-md p-4 whitespace-pre-wrap text-gray-800">{menu}</pre>
+      <main className="min-h-screen bg-white px-6 py-4 flex flex-col">
+      {/* Top Bar */}
+      <div className="flex justify-between items-center mb-12">
+        <div className="flex items-center gap-3">
+          <Image src="/images/logo.png" alt="TheMEAL logo" width={100} height={100} />
+          <h1 className="text-2xl font-lexend text-green-900">TheMEAL</h1>
+        </div>
+        <div className="flex items-center gap-4">
+          <Link href="/">
+            <span className="text-green-900 font-semibold underline cursor-pointer">HOME</span>
+          </Link>
+          <svg className="w-6 h-6 text-green-900" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
         </div>
       </div>
+      {/* Form Box */}
+        {/* <div
+            className="rounded-3xl border-2 border-green-900 p-8 md:p-10 flex flex-col items-center w-full max-w-7xl mx-auto"
+            style={{ backgroundColor: '#88d499' }}
+        > */}
+        
+        
+        <div className="bg-[#88d499] rounded-3xl border-2 border-green-900 p-8 md:p-10 w-full max-w-4xl mx-auto">
+  <form className="grid md:grid-cols-2 gap-8 text-green-900">
+    {/* LEFT COLUMN */}
+    <div className="flex flex-col gap-4">
+      <div>
+        <label className="font-semibold">Gender:</label>
+        <select className="w-full rounded-xl p-3 mt-1 bg-white">
+          <option>Male</option>
+          <option>Female</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div>
+        <label className="font-semibold">Age:</label>
+        <input type="number" className="w-full rounded-xl p-3 mt-1 bg-white" />
+      </div>
+
+      <div className="flex gap-4">
+        <div className="w-1/2">
+          <label className="font-semibold">Height:</label>
+          <input type="text" className="w-full rounded-xl p-3 mt-1 bg-white" />
+        </div>
+        <div className="w-1/2">
+          <label className="font-semibold">Weight:</label>
+          <input type="text" className="w-full rounded-xl p-3 mt-1 bg-white" />
+        </div>
+      </div>
+
+      <div>
+        <label className="font-semibold">Goal:</label>
+        <select className="w-full rounded-xl p-3 mt-1 bg-white">
+          <option>Lose Weight</option>
+          <option>Maintain Weight</option>
+          <option>Gain Weight</option>
+        </select>
+      </div>
+
+    </div>
+
+    {/* RIGHT COLUMN */}
+    <div className="flex flex-col gap-4 border-l border-green-900 pl-6">
+      <div>
+        <label className="font-semibold">Exercise Frequency:</label>
+        <select className="w-full rounded-xl p-3 mt-1 bg-white">
+          <option>0-1 hr/week</option>
+          <option>1-3 hrs/week</option>
+          <option>3-6 hrs/week</option>
+          <option>6-10 hrs/week</option>
+          <option>10+ hrs/week</option>
+        </select>
+      </div>
+
+      <div>
+        <label className="font-semibold">Health Condition:</label>
+        <select className="w-full rounded-xl p-3 mt-1 bg-white">
+          <option>None</option>
+          <option>Diabetes</option>
+          <option>High Blood Pressure</option>
+        </select>
+      </div>
+
+      <div>
+        <label className="font-semibold">Dietary Restriction:</label>
+        <textarea className="w-full rounded-xl p-3 mt-1 h-28 resize-none bg-white" />
+      </div>
+    </div>
+  </form>
+
+  {/* Submit Button */}
+  <div className="flex justify-center mt-8">
+    <button 
+      onClick={() => router.push('/option')}
+      className="px-10 py-3 bg-[#8b61c2] text-white rounded-full hover:bg-purple-700 font-semibold">
+      Generate Meals
+    </button>
+  </div>
+</div>
+
     </main>
   );
 }
