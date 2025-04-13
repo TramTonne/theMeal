@@ -3,35 +3,33 @@ export default async function handler(req, res) {
     return res.status(405).end();
   }
 
-  // --- Extract input values in the specified order ---
-  // Expected order: gender, age, height, weight, goal, activity, health, dietary.
   const { gender, age, height, weight, goal, activity, health, dietary } = req.body;
 
-  // --- Set default values if any input is blank ---
+  // Set default values if any input is blank
   const defaultGender   = 'none';
   const defaultAge      = '25';
   const defaultHeight   = '170';
   const defaultWeight   = '70';
-  const defaultGoal     = 'Maintain'; // Options: "Lose Weight", "Maintain", "Gain Weight"
+  const defaultGoal     = 'Maintain';
   const defaultActivity = '0-1 hr/week';
   const defaultHealth   = 'none';
   const defaultDietary  = 'none';
 
-  const safeGender   = (gender && gender.trim())   ? gender.trim()   : defaultGender;
-  const safeAge      = (age && age.trim())      ? age.trim()      : defaultAge;
-  const safeHeight   = (height && height.trim())   ? height.trim()   : defaultHeight;
-  const safeWeight   = (weight && weight.trim())   ? weight.trim()   : defaultWeight;
-  const safeGoal     = (goal && goal.trim())     ? goal.trim()     : defaultGoal;
+  const safeGender   = (gender && gender.trim()) ? gender.trim() : defaultGender;
+  const safeAge      = (age && age.trim()) ? age.trim() : defaultAge;
+  const safeHeight   = (height && height.trim()) ? height.trim() : defaultHeight;
+  const safeWeight   = (weight && weight.trim()) ? weight.trim() : defaultWeight;
+  const safeGoal     = (goal && goal.trim()) ? goal.trim() : defaultGoal;
   const safeActivity = (activity && activity.trim()) ? activity.trim() : defaultActivity;
-  const safeHealth   = (health && health.trim())   ? health.trim()   : defaultHealth;
-  const safeDietary  = (dietary && dietary.trim()) ? dietary.trim()  : defaultDietary;
+  const safeHealth   = (health && health.trim()) ? health.trim() : defaultHealth;
+  const safeDietary  = (dietary && dietary.trim()) ? dietary.trim() : defaultDietary;
 
-  // --- Convert numeric inputs ---
+  // Convert numeric inputs
   const w = Number(safeWeight);
   const h = Number(safeHeight);
   const a = Number(safeAge);
 
-  // --- Convert activity input into a numerical rate ---
+  // Convert activity input into a numerical rate
   const activityMap = {
     "0-1 hr/week": 1.2,
     "1-3 hrs/week": 1.375,
@@ -41,40 +39,36 @@ export default async function handler(req, res) {
   };
   const actFactor = activityMap[safeActivity] || 1.2;
 
-  // --- Calculate Basal Metabolic Rate (BMR) ---
+  // Calculate Basal Metabolic Rate (BMR)
   let BMR;
-  if (safeGender.toLowerCase() === 'Male') {
+  if (safeGender === 'Male') {
     BMR = 13.397 * w + 4.799 * h - 5.677 * a + 88.362;
-  } else if (safeGender.toLowerCase() === 'Female') {
+  } else if (safeGender === 'Female') {
     BMR = 9.247 * w + 3.098 * h - 4.330 * a + 447.593;
   } else {
-    // Use an average of male and female formulas if gender is not clearly specified.
     BMR = (13.397 * w + 4.799 * h - 5.677 * a + 88.362 +
            9.247 * w + 3.098 * h - 4.330 * a + 447.593) / 2;
   }
 
-  // --- Calculate Total Daily Energy Expenditure (TDEE) ---
+  // Calculate Total Daily Energy Expenditure (TDEE)
   const TDEE = BMR * actFactor;
 
-  // --- Adjust calories based on goal ---
-  const goalLower = safeGoal.toLowerCase();
-  const delta = 500; // roughly 0.5 kg/week adjustment
+  // Adjust calories based on goal
+  const delta = 500; // ~0.5 kg/week adjustment
   let targetCalories = TDEE;
-  if (goalLower.includes('Lose Weight')) {
+  if (safeGoal == 'Lose Weight') {
     targetCalories = TDEE - delta;
-  } else if (goalLower.includes('Gain Weight')) {
+  } else if (safeGoal == 'Gain Weight') {
     targetCalories = TDEE + delta;
   }
   targetCalories = Math.round(targetCalories);
 
-  // --- Calculate daily macronutrients using fixed ratios ---
+  // Calculate daily macronutrients
   const totalProtein = Math.round((targetCalories * 0.25) / 4);
   const totalFat     = Math.round((targetCalories * 0.25) / 9);
   const totalCarbs   = Math.round((targetCalories * 0.50) / 4);
 
-  // --- Build Prompt for the AI ---
-  // In addition to the overall daily calories and macros, we instruct the AI to output for each meal:
-  // Name, per-meal Calories, Protein, Fat, Carbs, Ingredients, and Recipe.
+  // Build Prompt for the AI
   const prompt = `
 You are a nutritionist. Create a 1‑day meal plan with only Breakfast, Lunch, and Dinner that meets:
 - Daily Calories: ${targetCalories} kcal
@@ -85,7 +79,6 @@ You are a nutritionist. Create a 1‑day meal plan with only Breakfast, Lunch, a
 - Dietary restriction: ${safeDietary}
 
 Ensure that the per‑meal nutritional values add up exactly to the daily totals provided.
-The meal plan should be balanced and include a variety of foods. Use common ingredients and recipes that are easy to prepare.
 
 For each meal, output exactly in this format:
 
@@ -137,49 +130,115 @@ Recipe:
 Do not include any extra text, numbering outside these lists, or explanations—just these three sections.
   `;
 
-  const openaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      model: 'gpt-4',
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.7
-    })
-  });
+  // Call OpenAI API
+  const openaiRes = await fetch(
+    'https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'gpt-4',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.7
+      })
+    }
+  );
 
-  const data = await openaiRes.json();
-  const message = data.choices?.[0]?.message?.content || 'Something went wrong.';
+  const responseData = await openaiRes.json();
+  const rawMealPlanText = responseData.choices?.[0]?.message?.content || '';
 
-  // --- Split the message into sections ---
-  const [_, breakfastPart, lunchPart, dinnerPart] = message.split(/(?:\r?\n){2}(?=Lunch:|Dinner:|Breakfast:)/);
+  // Parse the returned meal plan text
+  function parseMealPlan(text) {
+    // Split into blocks based on meal headers
+    const blocks = text.split(/\n(?=(Breakfast:|Lunch:|Dinner:))/g);
+    const result = {};
 
-  // --- Extract meal names from each section ---
-  function extractName(section) {
-    const match = section.match(/Name:\s*(.*)/);
-    return match ? match[1].trim() : 'Unknown';
+    blocks.forEach(block => {
+      const lines = block.trim().split('\n').map(l => l.trim());
+      const mealKey = lines[0].replace(':', '').toLowerCase();
+
+      let name = '';
+      let mealCalories = '';
+      let mealProtein  = '';
+      let mealFat      = '';
+      let mealCarbs    = '';
+      const ingredients = [];
+      const recipe = [];
+
+      let mode = null;  // Switch between ingredients and recipe sections
+
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i];
+        if (line.startsWith('Name:')) {
+          name = line.replace('Name:', '').trim();
+        } else if (line.startsWith('Calories:')) {
+          mealCalories = line.replace('Calories:', '').trim();
+        } else if (line.startsWith('Protein:')) {
+          mealProtein = line.replace('Protein:', '').trim();
+        } else if (line.startsWith('Fat:')) {
+          mealFat = line.replace('Fat:', '').trim();
+        } else if (line.startsWith('Carbs:')) {
+          mealCarbs = line.replace('Carbs:', '').trim();
+        } else if (line.startsWith('Ingredients:')) {
+          mode = 'ingredients';
+        } else if (line.startsWith('Recipe:')) {
+          mode = 'recipe';
+        } else if (/^\d+\.\s+/.test(line) && mode) {
+          const item = line.replace(/^\d+\.\s+/, '').trim();
+          if (mode === 'ingredients') {
+            ingredients.push(item);
+          } else if (mode === 'recipe') {
+            recipe.push(item);
+          }
+        }
+      }
+      result[mealKey] = {
+        name,
+        calories: mealCalories,
+        protein: mealProtein,
+        fat: mealFat,
+        carbs: mealCarbs,
+        ingredients,
+        recipe
+      };
+    });
+    return result;
   }
 
-  const breakfastName = extractName(breakfastPart);
-  const lunchName     = extractName(lunchPart);
-  const dinnerName    = extractName(dinnerPart);
+  const mealPlanObject = parseMealPlan(rawMealPlanText.trim());
 
-  console.log('Generated meal names:', {
-    breakfastName,
-    lunchName,
-    dinnerName
-  });
-
+  // Return the combined data broken into parts for the front end
   res.status(200).json({
-    menu: message,
-    breakfast: breakfastPart,
-    lunch: lunchPart,
-    dinner: dinnerPart,
-    breakfastName,
-    lunchName,
-    dinnerName
+    targetCalories,
+    dailyMacros: { protein: totalProtein, fat: totalFat, carbs: totalCarbs },
+
+    breakfastName: mealPlanObject.breakfast.name,
+    breakfastIngredients: mealPlanObject.breakfast.ingredients,
+    breakfastRecipe: mealPlanObject.breakfast.recipe,
+    breakfastCalories: mealPlanObject.breakfast.calories,
+    breakfastProtein: mealPlanObject.breakfast.protein,
+    breakfastFat: mealPlanObject.breakfast.fat,
+    breakfastCarbs: mealPlanObject.breakfast.carbs,
+    
+    lunchName: mealPlanObject.lunch.name,
+    lunchIngredients: mealPlanObject.lunch.ingredients,
+    lunchRecipe: mealPlanObject.lunch.recipe,
+    lunchCalories: mealPlanObject.lunch.calories,
+    lunchProtein: mealPlanObject.lunch.protein,
+    lunchFat: mealPlanObject.lunch.fat,
+    lunchCarbs: mealPlanObject.lunch.carbs,
+    
+    dinnerName: mealPlanObject.dinner.name,
+    dinnerIngredients: mealPlanObject.dinner.ingredients,
+    dinnerRecipe: mealPlanObject.dinner.recipe,
+    dinnerCalories: mealPlanObject.dinner.calories,
+    dinnerProtein: mealPlanObject.dinner.protein,
+    dinnerFat: mealPlanObject.dinner.fat,
+    dinnerCarbs: mealPlanObject.dinner.carbs,
+
+    // The raw response for debugging
+    rawMealPlanText: rawMealPlanText.trim(),
   });
 }
-
