@@ -19,53 +19,58 @@ export default function GeneratePage() {
     dietary: ''
   });
 
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-  
-    try {
-      const res = await fetch('/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      });
-  
-      const data = await res.json();
-  
-      localStorage.setItem('mealData', JSON.stringify({
-        breakfast: data.breakfastRecipe,
-        lunch: data.lunchRecipe,
-        dinner: data.dinnerRecipe,
-        breakfastName: data.breakfastName,
-        lunchName: data.lunchName,
-        dinnerName: data.dinnerName,
-        breakfastCalories: data.breakfastCalories,
-        lunchCalories: data.lunchCalories,
-        dinnerCalories: data.dinnerCalories,
-        breakfastProtein: data.breakfastProtein,
-        lunchProtein: data.lunchProtein,
-        dinnerProtein: data.dinnerProtein,
-        breakfastFat: data.breakfastFat,
-        lunchFat: data.lunchFat,
-        dinnerFat: data.dinnerFat,
-        breakfastCarbs: data.breakfastCarbs,
-        lunchCarbs: data.lunchCarbs,
-        dinnerCarbs: data.dinnerCarbs,
-      }));
-  
-      router.push('/option');
-    } catch (err) {
-      console.error('API error:', err);
-      alert('Something went wrong. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };  
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
+  try {
+    const res = await fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form),
+    });
+
+    const data = await res.json();
+
+    // Save the meal plan along with target values and macros for later use
+    localStorage.setItem('mealData', JSON.stringify({
+      breakfast: data.breakfastRecipe,
+      lunch: data.lunchRecipe,
+      dinner: data.dinnerRecipe,
+      breakfastName: data.breakfastName,
+      lunchName: data.lunchName,
+      dinnerName: data.dinnerName,
+      breakfastCalories: data.breakfastCalories,
+      lunchCalories: data.lunchCalories,
+      dinnerCalories: data.dinnerCalories,
+      breakfastProtein: data.breakfastProtein,
+      lunchProtein: data.lunchProtein,
+      dinnerProtein: data.dinnerProtein,
+      breakfastFat: data.breakfastFat,
+      lunchFat: data.lunchFat,
+      dinnerFat: data.dinnerFat,
+      breakfastCarbs: data.breakfastCarbs,
+      lunchCarbs: data.lunchCarbs,
+      dinnerCarbs: data.dinnerCarbs,
+      targetCalories: data.targetCalories,
+      dailyMacros: data.dailyMacros,
+      health: form.health,
+      dietary: form.dietary,
+    }));
+
+    router.push('/option');
+  } catch (err) {
+    console.error('API error:', err);
+    alert('Something went wrong. Please try again.');
+  } finally {
+    setLoading(false);
+  }
+};
   
   return (
     <main className="min-h-screen bg-white px-6 py-4 flex flex-col">
@@ -73,7 +78,7 @@ export default function GeneratePage() {
       <div className="flex justify-between items-center mb-12">
         <div className="flex items-center gap-3">
           <Image src="/images/logo.png" alt="TheMEAL logo" width={100} height={100} />
-          <h1 className="text-2xl font-lexend text-green-900">TheMEAL</h1>
+          <h1 className="text-2xl font-lexend text-green-900 relative top-[15px] left-[-15px]">TheMEAL</h1>
         </div>
         <div className="flex items-center gap-4">
           <Link href="/">
@@ -108,11 +113,11 @@ export default function GeneratePage() {
             <div className="flex gap-4">
               <div className="w-1/2">
                 <label className="font-semibold">Height:</label>
-                <input name="height" value={form.height} type="text" onChange={handleChange} placeholder="Enter your height" className="w-full rounded-xl p-3 mt-1 bg-white" />
+                <input name="height" value={form.height} type="text" onChange={handleChange} placeholder="Enter your height (cm)" className="w-full rounded-xl p-3 mt-1 bg-white" />
               </div>
               <div className="w-1/2">
                 <label className="font-semibold">Weight:</label>
-                <input name="weight" value={form.weight} type="text" onChange={handleChange} placeholder="Enter your weight" className="w-full rounded-xl p-3 mt-1 bg-white" />
+                <input name="weight" value={form.weight} type="text" onChange={handleChange} placeholder="Enter your weight (kg)" className="w-full rounded-xl p-3 mt-1 bg-white" />
               </div>
             </div>
             <div>
@@ -152,6 +157,7 @@ export default function GeneratePage() {
                 <option>None</option>
                 <option>Diabetes</option>
                 <option>High Blood Pressure</option>
+                <option>Other (Mention below)</option>
               </select>
             </div>
             <div>
@@ -164,19 +170,31 @@ export default function GeneratePage() {
           </div>
         </form>
 
+        <style jsx>{`
+          @keyframes zoomInOut {
+            0% {
+              transform: scale(1);
+            }
+            50% {
+              transform: scale(1.3);
+            }
+            100% {
+              transform: scale(1);
+            }
+          }
+
+          .loading-animation {
+          animation: zoomInOut 1s infinite;
+          }
+        `}</style>
         {/* Submit Button */}
         <div className="flex justify-center mt-8">
-          {/* <button
-            onClick={() => router.push('/option')}
-            className="px-10 py-3 bg-[#8b61c2] text-white rounded-full hover:bg-purple-700 font-semibold"
-          >
-            Generate Meals
-          </button> */}
           <button
             onClick={handleSubmit}
-            className="px-10 py-3 bg-[#8b61c2] text-white rounded-full hover:bg-purple-700 font-semibold"
+            className={`px-10 py-3 bg-[#8b61c2] text-white rounded-full hover:bg-purple-700 font-semibold ${loading ? 'loading-animation' : ''}`}
+            disabled={loading}
           >
-            {loading ? 'Generating...' : 'Generate Meals'}
+            Generate Meals
           </button>
         </div>
       </div>
