@@ -13,9 +13,7 @@ Backend: Next.js API Routes
 API: OpenAI GPT‑4 for meal planning
 
 Installation
-Clone the Repository:
-git clone https://github.com/yourusername/themeal.git
-cd themeal
+Clone the Repository
 
 Install Dependencies:
 npm install
