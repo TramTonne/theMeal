@@ -152,5 +152,27 @@ Do not include any extra text, numbering outside these lists, or explanations—
 
   const data = await openaiRes.json();
   const message = data.choices?.[0]?.message?.content || 'Something went wrong.';
-  res.status(200).json({ menu: message });
+
+  // --- Split the message into sections ---
+  const [_, breakfastPart, lunchPart, dinnerPart] = message.split(/(?:\r?\n){2}(?=Lunch:|Dinner:|Breakfast:)/);
+
+  // --- Extract meal names from each section ---
+  function extractName(section) {
+    const match = section.match(/Name:\s*(.*)/);
+    return match ? match[1].trim() : 'Unknown';
+  }
+
+  const breakfastName = extractName(breakfastPart);
+  const lunchName     = extractName(lunchPart);
+  const dinnerName    = extractName(dinnerPart);
+
+  res.status(200).json({
+    menu: message,
+    breakfast: breakfastPart,
+    lunch: lunchPart,
+    dinner: dinnerPart,
+    breakfastName,
+    lunchName,
+    dinnerName
+  });
 }
