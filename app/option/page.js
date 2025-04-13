@@ -75,33 +75,33 @@ export default function OptionPage() {
 
       {/* CONDITIONAL LAYOUT */}
       {selected ? (
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="flex flex-col md:flex-row gap-6 justify-center">
           {/* Selected Meal Card */}
-          <div className="bg-[#88d499] rounded-3xl p-6 flex flex-col items-center">
+          <div className="bg-[#88d499] rounded-3xl p-6 flex flex-col items-center w-full max-w-sm">
             <h2 className="text-xl font-semibold text-green-900 mb-4 capitalize">{selected}:</h2>
             <div className="bg-white rounded-xl p-4 w-full text-center mb-4 shadow min-h-[80px] flex items-center justify-center">
-              {meals[selected]}
+              {meals[selected] || 'Loading...'}
             </div>
             <h3 className="text-lg font-semibold text-green-900 mb-2">Nutrients:</h3>
             <div className="bg-white rounded-xl p-4 w-full h-24 shadow"></div>
           </div>
 
           {/* Recipe Box */}
-          <div className="relative bg-white rounded-3xl border-2 border-green-900 p-6">
+          <div className="relative bg-white rounded-2xl border border-green-900 p-4 w-full max-w-sm shadow-md">
             <button
               onClick={() => setSelected(null)}
-              className="absolute top-4 right-4 text-3xl font-bold text-green-800 hover:text-red-600"
+              className="absolute top-2 right-3 text-2xl font-bold text-green-800 hover:text-red-600"
             >
               ×
             </button>
 
-            <h2 className="text-2xl font-bold text-green-900 underline mb-4">RECIPE:</h2>
-            <p className="whitespace-pre-line text-green-800 mb-4">{recipes[selected].title}</p>
-            <p className="whitespace-pre-line text-green-800 mb-4">{recipes[selected].content}</p>
-            <p className="whitespace-pre-line text-green-800">{recipes[selected].instructions}</p>
+            <h2 className="text-xl font-bold text-green-900 underline mb-2">RECIPE</h2>
+            <p className="text-green-800 mb-2 font-semibold">{mealNames[selected + 'Name']}</p>
+            <p className="whitespace-pre-line text-green-800 text-sm mb-2">{recipes[selected].content}</p>
+            <p className="whitespace-pre-line text-green-800 text-sm">{recipes[selected].instructions}</p>
 
             <div className="mt-4 rounded-xl overflow-hidden">
-              <Image src={recipes[selected].image} alt="Recipe" width={400} height={300} className="rounded-xl" />
+              <Image src={recipes[selected].image} alt="Recipe" width={300} height={200} className="rounded-xl" />
             </div>
           </div>
         </div>
