@@ -61,5 +61,3 @@
 
 
 ```
-
-Let me know if you'd like a badge section (e.g., for build, license, or OpenAI usage), or if you want this in a more minimalistic or more styled version!
