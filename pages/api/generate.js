@@ -78,7 +78,7 @@ You are a nutritionist. Create a 1‑day meal plan with only Breakfast, Lunch, a
 - Health condition: ${safeHealth}
 - Dietary restriction: ${safeDietary}
 
-Ensure that the per‑meal nutritional values add up exactly to the daily totals provided.
+Ensure that the per‑meal nutritional values add up exactly to the daily totals provided. The nutritional values don't need to be spread evenly across meals, but they should be reasonable. The meal plan should be diverse and include a variety of ingredients.
 
 For each meal, output exactly in this format:
 
@@ -209,30 +209,34 @@ Do not include any extra text, numbering outside these lists, or explanations—
 
   const mealPlanObject = parseMealPlan(rawMealPlanText.trim());
 
+  function formatList(items) {
+    return items.map((item, idx) => `${idx + 1}. ${item}`).join('\n');
+  }
+
   // Return the combined data broken into parts for the front end
   res.status(200).json({
     targetCalories,
     dailyMacros: { protein: totalProtein, fat: totalFat, carbs: totalCarbs },
 
     breakfastName: mealPlanObject.breakfast.name,
-    breakfastIngredients: mealPlanObject.breakfast.ingredients,
-    breakfastRecipe: mealPlanObject.breakfast.recipe,
+    breakfastIngredients: formatList(mealPlanObject.breakfast.ingredients),
+    breakfastRecipe: formatList(mealPlanObject.breakfast.recipe),
     breakfastCalories: mealPlanObject.breakfast.calories,
     breakfastProtein: mealPlanObject.breakfast.protein,
     breakfastFat: mealPlanObject.breakfast.fat,
     breakfastCarbs: mealPlanObject.breakfast.carbs,
     
     lunchName: mealPlanObject.lunch.name,
-    lunchIngredients: mealPlanObject.lunch.ingredients,
-    lunchRecipe: mealPlanObject.lunch.recipe,
+    lunchIngredients: formatList(mealPlanObject.lunch.ingredients),
+    lunchRecipe: formatList(mealPlanObject.lunch.recipe),
     lunchCalories: mealPlanObject.lunch.calories,
     lunchProtein: mealPlanObject.lunch.protein,
     lunchFat: mealPlanObject.lunch.fat,
     lunchCarbs: mealPlanObject.lunch.carbs,
     
     dinnerName: mealPlanObject.dinner.name,
-    dinnerIngredients: mealPlanObject.dinner.ingredients,
-    dinnerRecipe: mealPlanObject.dinner.recipe,
+    dinnerIngredients: formatList(mealPlanObject.dinner.ingredients),
+    dinnerRecipe: formatList(mealPlanObject.dinner.recipe),
     dinnerCalories: mealPlanObject.dinner.calories,
     dinnerProtein: mealPlanObject.dinner.protein,
     dinnerFat: mealPlanObject.dinner.fat,
