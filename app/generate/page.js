@@ -1,10 +1,60 @@
 'use client';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
 export default function GeneratePage() {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  
+  const [form, setForm] = useState({
+    gender: '',
+    age: '',
+    height: '',
+    weight: '',
+    goal: '',
+    activity: '',
+    health: '',
+    dietary: ''
+  });
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+  
+    try {
+      const res = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+  
+      const data = await res.json();
+  
+      localStorage.setItem('mealData', JSON.stringify({
+        breakfast: data.breakfastRecipe.join('\n'),
+        lunch: data.lunchRecipe.join('\n'),
+        dinner: data.dinnerRecipe.join('\n'),
+        breakfastName: data.breakfastName,
+        lunchName: data.lunchName,
+        dinnerName: data.dinnerName,
+      }));
+  
+      router.push('/option');
+    } catch (err) {
+      console.error('API error:', err);
+      alert('Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };  
+
+  
   return (
     <main className="min-h-screen bg-white px-6 py-4 flex flex-col">
       {/* Top Bar */}
@@ -34,13 +84,13 @@ export default function GeneratePage() {
       </div>
       {/* Form Box */}
       <div className="bg-[#88d499] rounded-3xl border-2 border-green-900 p-8 md:p-10 w-full max-w-4xl mx-auto">
-        <form className="grid md:grid-cols-2 gap-8 text-green-900">
+        <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-8 text-green-900">
           {/* LEFT COLUMN */}
           <div className="flex flex-col gap-4">
             <div>
               <label className="font-semibold">Gender:</label>
-              <select className="w-full rounded-xl p-3 mt-1 bg-white">
-                <option value="" disabled selected hidden>
+              <select name="gender" value={form.gender} onChange={handleChange} className="w-full rounded-xl p-3 mt-1 bg-white">
+                <option value="" disabled hidden>
                   Select Gender
                 </option>
                 <option>Male</option>
@@ -51,24 +101,24 @@ export default function GeneratePage() {
 
             <div>
               <label className="font-semibold">Age:</label>
-              <input type="number" placeholder="Enter your age" className="w-full rounded-xl p-3 mt-1 bg-white" />
+              <input name="age" value={form.age} type="number" onChange={handleChange} placeholder="Enter your age" className="w-full rounded-xl p-3 mt-1 bg-white" />
             </div>
 
             <div className="flex gap-4">
               <div className="w-1/2">
                 <label className="font-semibold">Height:</label>
-                <input type="text" placeholder="Enter your height" className="w-full rounded-xl p-3 mt-1 bg-white" />
+                <input name="height" value={form.height} type="text" onChange={handleChange} placeholder="Enter your height" className="w-full rounded-xl p-3 mt-1 bg-white" />
               </div>
               <div className="w-1/2">
                 <label className="font-semibold">Weight:</label>
-                <input type="text" placeholder="Enter your weight" className="w-full rounded-xl p-3 mt-1 bg-white" />
+                <input name="weight" value={form.weight} type="text" onChange={handleChange} placeholder="Enter your weight" className="w-full rounded-xl p-3 mt-1 bg-white" />
               </div>
             </div>
 
             <div>
               <label className="font-semibold">Goal:</label>
-              <select className="w-full rounded-xl p-3 mt-1 bg-white">
-                <option value="" disabled selected hidden>
+              <select name="goal" value={form.goal} onChange={handleChange} className="w-full rounded-xl p-3 mt-1 bg-white">
+                <option value="" disabled hidden>
                   Select Goal
                 </option>
                 <option>Lose Weight</option>
@@ -82,8 +132,8 @@ export default function GeneratePage() {
           <div className="flex flex-col gap-4 border-l border-green-900 pl-6">
             <div>
               <label className="font-semibold">Exercise Frequency:</label>
-              <select className="w-full rounded-xl p-3 mt-1 bg-white">
-                <option value="" disabled selected hidden>
+              <select name="activity" value={form.activity} onChange={handleChange} className="w-full rounded-xl p-3 mt-1 bg-white">
+                <option value="" disabled hidden>
                   Select Frequency
                 </option>
                 <option>0-1 hr/week</option>
@@ -96,8 +146,8 @@ export default function GeneratePage() {
 
             <div>
               <label className="font-semibold">Health Condition:</label>
-              <select className="w-full rounded-xl p-3 mt-1 bg-white">
-                <option value="" disabled selected hidden>
+              <select name="health" value={form.health} onChange={handleChange} className="w-full rounded-xl p-3 mt-1 bg-white">
+                <option value="" disabled hidden>
                   Select Health Condition
                 </option>
                 <option>None</option>
@@ -108,7 +158,7 @@ export default function GeneratePage() {
 
             <div>
               <label className="font-semibold">Dietary Restriction:</label>
-              <textarea
+              <textarea name="dietary" value={form.dietary} onChange={handleChange}
                 placeholder="Enter any dietary restrictions"
                 className="w-full rounded-xl p-3 mt-1 h-28 resize-none bg-white"
               />
@@ -118,11 +168,17 @@ export default function GeneratePage() {
 
         {/* Submit Button */}
         <div className="flex justify-center mt-8">
-          <button
+          {/* <button
             onClick={() => router.push('/option')}
             className="px-10 py-3 bg-[#8b61c2] text-white rounded-full hover:bg-purple-700 font-semibold"
           >
             Generate Meals
+          </button> */}
+          <button
+            onClick={handleSubmit}
+            className="px-10 py-3 bg-[#8b61c2] text-white rounded-full hover:bg-purple-700 font-semibold"
+          >
+            {loading ? 'Generating...' : 'Generate Meals'}
           </button>
         </div>
       </div>

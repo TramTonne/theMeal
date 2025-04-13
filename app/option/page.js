@@ -17,6 +17,12 @@ export default function OptionPage() {
     dinnerName: '',
   });
 
+  const [mealRecipes, setMealRecipes] = useState({
+    breakfast: { ingredients: [], recipe: [] },
+    lunch: { ingredients: [], recipe: [] },
+    dinner: { ingredients: [], recipe: [] },
+  });
+
   useEffect(() => {
     const stored = localStorage.getItem('mealData');
     if (stored) {
@@ -31,29 +37,15 @@ export default function OptionPage() {
         lunchName: parsed.lunchName,
         dinnerName: parsed.dinnerName,
       });
+
+      // Also set recipes
+      setMealRecipes({
+        breakfast: { recipe: parsed.breakfast.split('\n'), ingredients: [] },
+        lunch: { recipe: parsed.lunch.split('\n'), ingredients: [] },
+        dinner: { recipe: parsed.dinner.split('\n'), ingredients: [] },
+      });
     }
   }, []);
-
-  const recipes = {
-    breakfast: {
-      title: 'Pancake Ingredients',
-      content: `· Flour\n· Baking powder\n· Sugar\n· Salt\n· Milk and butter\n· Egg`,
-      instructions: `How to Make Pancakes From Scratch\n1. Sift the dry ingredients together.\n2. Make a well, then add the wet ingredients. Stir to combine.`,
-      image: '/images/pancakes.jpg',
-    },
-    lunch: {
-      title: 'Chicken Soup Recipe',
-      content: `· Chicken\n· Noodles\n· Carrots\n· Celery\n· Onion`,
-      instructions: `Boil chicken. Add veggies & noodles. Simmer 20 mins.`,
-      image: '/images/soup.jpg',
-    },
-    dinner: {
-      title: 'Salad + Chicken',
-      content: `· Romaine lettuce\n· Grilled chicken\n· Caesar dressing\n· Croutons`,
-      instructions: `Grill chicken, mix with salad & dressing.`,
-      image: '/images/salad.jpg',
-    },
-  };
 
   return (
     <main className="min-h-screen bg-white px-6 py-4 flex flex-col">
@@ -97,11 +89,11 @@ export default function OptionPage() {
 
             <h2 className="text-xl font-bold text-green-900 underline mb-2">RECIPE</h2>
             <p className="text-green-800 mb-2 font-semibold">{mealNames[selected + 'Name']}</p>
-            <p className="whitespace-pre-line text-green-800 text-sm mb-2">{recipes[selected].content}</p>
-            <p className="whitespace-pre-line text-green-800 text-sm">{recipes[selected].instructions}</p>
+            <p className="whitespace-pre-line text-green-800 text-sm mb-2">{mealRecipes[selected].recipe.join('\n')}</p>
+            <p className="whitespace-pre-line text-green-800 text-sm">{mealRecipes[selected].ingredients.join(', ')}</p>
 
             <div className="mt-4 rounded-xl overflow-hidden">
-              <Image src={recipes[selected].image} alt="Recipe" width={300} height={200} className="rounded-xl" />
+              <Image src="/images/placeholder.png" alt="Recipe" width={300} height={200} className="rounded-xl" />
             </div>
           </div>
         </div>
@@ -117,11 +109,11 @@ export default function OptionPage() {
                           hover:scale-[1.02] hover:shadow-2xl transition-all duration-300 ease-in-out w-full"
               >
                 <h2 className="text-xl font-semibold text-green-900 mb-4 capitalize">{type}:</h2>
-                <div className="bg-white rounded-xl p-4 w-full text-center mb-4 shadow min-h-[80px] flex items-center justify-center">
+                <div className="bg-white text-gray-700 rounded-xl p-4 w-full text-center mb-4 shadow min-h-[80px] flex items-center justify-center">
                   {mealNames[`${type}Name`] || meals[type] || 'Loading...'}
                 </div>
                 <h3 className="text-lg font-semibold text-green-900 mb-2">Nutrients:</h3>
-                <div className="bg-white rounded-xl p-4 w-full h-24 shadow"></div>
+                <div className="bg-white text-gray-950 rounded-xl p-4 w-full h-24 shadow"></div>
               </button>
 
               {/* Re-generate button (outside the box) */}
