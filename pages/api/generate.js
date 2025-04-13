@@ -15,14 +15,14 @@ export default async function handler(req, res) {
   const defaultHealth   = 'none';
   const defaultDietary  = 'none';
 
-  const safeGender   = (gender && gender.trim())   ? gender.trim()   : defaultGender;
-  const safeAge      = (age && age.trim())      ? age.trim()      : defaultAge;
-  const safeHeight   = (height && height.trim())   ? height.trim()   : defaultHeight;
-  const safeWeight   = (weight && weight.trim())   ? weight.trim()   : defaultWeight;
-  const safeGoal     = (goal && goal.trim())     ? goal.trim()     : defaultGoal;
+  const safeGender   = (gender && gender.trim()) ? gender.trim() : defaultGender;
+  const safeAge      = (age && age.trim()) ? age.trim() : defaultAge;
+  const safeHeight   = (height && height.trim()) ? height.trim() : defaultHeight;
+  const safeWeight   = (weight && weight.trim()) ? weight.trim() : defaultWeight;
+  const safeGoal     = (goal && goal.trim()) ? goal.trim() : defaultGoal;
   const safeActivity = (activity && activity.trim()) ? activity.trim() : defaultActivity;
-  const safeHealth   = (health && health.trim())   ? health.trim()   : defaultHealth;
-  const safeDietary  = (dietary && dietary.trim()) ? dietary.trim()  : defaultDietary;
+  const safeHealth   = (health && health.trim()) ? health.trim() : defaultHealth;
+  const safeDietary  = (dietary && dietary.trim()) ? dietary.trim() : defaultDietary;
 
   // Convert numeric inputs
   const w = Number(safeWeight);
@@ -46,7 +46,6 @@ export default async function handler(req, res) {
   } else if (safeGender === 'Female') {
     BMR = 9.247 * w + 3.098 * h - 4.330 * a + 447.593;
   } else {
-    // Use an average of male and female formulas if gender is not clearly specified.
     BMR = (13.397 * w + 4.799 * h - 5.677 * a + 88.362 +
            9.247 * w + 3.098 * h - 4.330 * a + 447.593) / 2;
   }
@@ -152,13 +151,12 @@ Do not include any extra text, numbering outside these lists, or explanations—
 
   // Parse the returned meal plan text
   function parseMealPlan(text) {
-    // Split into blocks based on meal headers.
+    // Split into blocks based on meal headers
     const blocks = text.split(/\n(?=(Breakfast:|Lunch:|Dinner:))/g);
     const result = {};
 
     blocks.forEach(block => {
       const lines = block.trim().split('\n').map(l => l.trim());
-      // The first line should be the header (e.g., "Breakfast:")
       const mealKey = lines[0].replace(':', '').toLowerCase();
 
       let name = '';
@@ -169,7 +167,7 @@ Do not include any extra text, numbering outside these lists, or explanations—
       const ingredients = [];
       const recipe = [];
 
-      let mode = null;  // used for switching between ingredients and recipe sections
+      let mode = null;  // Switch between ingredients and recipe sections
 
       for (let i = 1; i < lines.length; i++) {
         const line = lines[i];
@@ -213,11 +211,9 @@ Do not include any extra text, numbering outside these lists, or explanations—
 
   // Return the combined data broken into parts for the front end
   res.status(200).json({
-    // Daily totals (expected by the plan)
     targetCalories,
     dailyMacros: { protein: totalProtein, fat: totalFat, carbs: totalCarbs },
 
-    // Parsed individual meal details (each broken out)
     breakfastName: mealPlanObject.breakfast.name,
     breakfastIngredients: mealPlanObject.breakfast.ingredients,
     breakfastRecipe: mealPlanObject.breakfast.recipe,
@@ -225,7 +221,7 @@ Do not include any extra text, numbering outside these lists, or explanations—
     breakfastProtein: mealPlanObject.breakfast.protein,
     breakfastFat: mealPlanObject.breakfast.fat,
     breakfastCarbs: mealPlanObject.breakfast.carbs,
-
+    
     lunchName: mealPlanObject.lunch.name,
     lunchIngredients: mealPlanObject.lunch.ingredients,
     lunchRecipe: mealPlanObject.lunch.recipe,
@@ -233,7 +229,7 @@ Do not include any extra text, numbering outside these lists, or explanations—
     lunchProtein: mealPlanObject.lunch.protein,
     lunchFat: mealPlanObject.lunch.fat,
     lunchCarbs: mealPlanObject.lunch.carbs,
-
+    
     dinnerName: mealPlanObject.dinner.name,
     dinnerIngredients: mealPlanObject.dinner.ingredients,
     dinnerRecipe: mealPlanObject.dinner.recipe,
@@ -242,7 +238,7 @@ Do not include any extra text, numbering outside these lists, or explanations—
     dinnerFat: mealPlanObject.dinner.fat,
     dinnerCarbs: mealPlanObject.dinner.carbs,
 
-    // Optionally include the raw text for debugging
-    rawMealPlanText: rawMealPlanText.trim()
+    // The raw response for debugging
+    rawMealPlanText: rawMealPlanText.trim(),
   });
 }
