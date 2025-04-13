@@ -10,7 +10,7 @@ You are a helpful meal planner. Create a 1-day meal plan with breakfast, lunch, 
 - Allergies: ${allergies}
 - Favorite cuisines: ${favorites}
 - Notes: ${notes}
-Respond in a clear format.
+Respond in a clear format, listing *only* breakfast, lunch, and dinner.
   `;
 
   const openaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
