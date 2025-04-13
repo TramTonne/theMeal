@@ -48,15 +48,37 @@ export default function GeneratePage() {
       </div>
 
       <div className="flex gap-4">
-        <div className="w-1/2">
-          <label className="font-semibold">Height:</label>
-          <input type="text" className="w-full rounded-xl p-3 mt-1 bg-white" />
-        </div>
-        <div className="w-1/2">
-          <label className="font-semibold">Weight:</label>
-          <input type="text" className="w-full rounded-xl p-3 mt-1 bg-white" />
-        </div>
-      </div>
+  {/* Height */}
+  <div className="w-1/2">
+    <label className="font-semibold">Height:</label>
+    <div className="flex items-center mt-1">
+      <input
+        type="text"
+        className="w-full rounded-l-xl p-3 bg-white focus:outline-none"
+        placeholder="e.g. 170"
+      />
+      <span className="bg-gray-100 text-gray-700 px-3 py-3 rounded-r-xl">
+        cm
+      </span>
+    </div>
+  </div>
+
+  {/* Weight */}
+  <div className="w-1/2">
+    <label className="font-semibold">Weight:</label>
+    <div className="flex items-center mt-1">
+      <input
+        type="text"
+        className="w-full rounded-l-xl p-3 bg-white  focus:outline-none"
+        placeholder="e.g. 65"
+      />
+      <span className="bg-gray-100 text-gray-700 px-3 py-3 rounded-r-xl">
+        kg
+      </span>
+    </div>
+  </div>
+</div>
+
 
       <div>
         <label className="font-semibold">Goal:</label>
@@ -88,6 +110,9 @@ export default function GeneratePage() {
           <option>None</option>
           <option>Diabetes</option>
           <option>High Blood Pressure</option>
+          <option>High Cholesterol</option>
+          <option>Heart Disease</option>
+          <option>Other (Mention in the box below)</option>
         </select>
       </div>
 
