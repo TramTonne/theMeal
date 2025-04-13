@@ -37,9 +37,9 @@ export default function GeneratePage() {
       const data = await res.json();
   
       localStorage.setItem('mealData', JSON.stringify({
-        breakfast: data.breakfastRecipe.join('\n'),
-        lunch: data.lunchRecipe.join('\n'),
-        dinner: data.dinnerRecipe.join('\n'),
+        breakfast: data.breakfastRecipe,
+        lunch: data.lunchRecipe,
+        dinner: data.dinnerRecipe,
         breakfastName: data.breakfastName,
         lunchName: data.lunchName,
         dinnerName: data.dinnerName,
