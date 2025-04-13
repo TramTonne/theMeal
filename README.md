@@ -5,8 +5,11 @@ Personalized Meal Plans: Generates breakfast, lunch, and dinner with exact nutri
 Meal Regeneration: Regenerate a specific meal without changing its targeted nutritional values.
 
 Tech Stack
+
 Frontend: Next.js (React), Tailwind CSS
+
 Backend: Next.js API Routes
+
 API: OpenAI GPT‑4 for meal planning
 
 Installation
