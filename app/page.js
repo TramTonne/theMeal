@@ -7,12 +7,12 @@ export default function Home() {
   const router = useRouter();
 
   return (
-    <main className="min-h-screen bg-white px-6 py-4 flex flex-col">
+    <main className="min-h-screen bg-[#f5fff9] px-6 py-4 flex flex-col">
       {/* Top Bar */}
       <div className="flex justify-between items-center mb-12">
         <div className="flex items-center gap-3">
           <Image src="/images/logo.png" alt="TheMEAL logo" width={100} height={100} />
-          <h1 className="text-2xl font-lexend text-green-900">TheMEAL</h1>
+          <h1 className="text-2xl font-lexend text-green-900 relative top-[15px] left-[-15px]">TheMEAL</h1>
         </div>
         <div>
           <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -26,7 +26,7 @@ export default function Home() {
         {/* Left - Image */}
         <div className="w-full md:w-1/2">
           <Image 
-            src="/images/logo.png" 
+            src="/images/home.png" 
             alt="Meal illustration" 
             width={600} 
             height={600} 
@@ -37,8 +37,12 @@ export default function Home() {
         {/* Right - Text and Button */}
         <div className="text-center md:text-left w-full md:w-1/2">
           <h2 className="text-4xl md:text-5xl font-bold leading-snug">
-            <span className="text-purple-600">Plan your MEAL</span>{' '}
-            <span className="text-green-500">for today.</span>
+            <span className="text-purple-600"
+            style={{ fontFamily: 'sans-serif' }}>
+              Plan your MEAL</span>{' '}
+            <span className="text-green-500" 
+            style={{ fontFamily: 'Source Serif Pro, serif' }}
+            >for today.</span>
           </h2>
           <button
             onClick={() => router.push('/generate')}

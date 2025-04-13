@@ -1,60 +1,72 @@
 'use client';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
 export default function GeneratePage() {
-  // Controlled form inputs starting empty.
-  const [gender, setGender] = useState('');
-  const [age, setAge] = useState('');
-  const [height, setHeight] = useState('');
-  const [weight, setWeight] = useState('');
-  const [goal, setGoal] = useState('');
-  const [activity, setActivity] = useState('');
-  const [health, setHealth] = useState('');
-  const [dietary, setDietary] = useState('');
-
-  // Meal data returned from the API.
-  const [mealData, setMealData] = useState(null);
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  
+  const [form, setForm] = useState({
+    gender: '',
+    age: '',
+    height: '',
+    weight: '',
+    goal: '',
+    activity: '',
+    health: '',
+    dietary: ''
+  });
 
-  // Handle form submission
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setMealData(null);
     setLoading(true);
+  
     try {
       const res = await fetch('/api/generate', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          gender,
-          age,
-          height,
-          weight,
-          goal,
-          activity,
-          health,
-          dietary,
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
       });
-      if (!res.ok) {
-        throw new Error('Network response was not ok');
-      }
+  
       const data = await res.json();
-      setMealData(data);
+  
+      localStorage.setItem('mealData', JSON.stringify({
+        breakfast: data.breakfastRecipe,
+        lunch: data.lunchRecipe,
+        dinner: data.dinnerRecipe,
+        breakfastName: data.breakfastName,
+        lunchName: data.lunchName,
+        dinnerName: data.dinnerName,
+        breakfastCalories: data.breakfastCalories,
+        lunchCalories: data.lunchCalories,
+        dinnerCalories: data.dinnerCalories,
+        breakfastProtein: data.breakfastProtein,
+        lunchProtein: data.lunchProtein,
+        dinnerProtein: data.dinnerProtein,
+        breakfastFat: data.breakfastFat,
+        lunchFat: data.lunchFat,
+        dinnerFat: data.dinnerFat,
+        breakfastCarbs: data.breakfastCarbs,
+        lunchCarbs: data.lunchCarbs,
+        dinnerCarbs: data.dinnerCarbs,
+      }));
+  
+      router.push('/option');
     } catch (err) {
-      console.error('Error generating meal plan:', err);
-      setError('Failed to generate meal plan. Please try again.');
+      console.error('API error:', err);
+      alert('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
-  };
+  };  
 
+  
   return (
     <main className="min-h-screen bg-white px-6 py-4 flex flex-col">
       {/* Top Bar */}
@@ -80,13 +92,8 @@ export default function GeneratePage() {
           <div className="flex flex-col gap-4">
             <div>
               <label className="font-semibold">Gender:</label>
-              <select
-                value={gender}
-                onChange={(e) => setGender(e.target.value)}
-                className="w-full rounded-xl p-3 mt-1 bg-white"
-                required
-              >
-                <option value="" disabled>
+              <select name="gender" value={form.gender} onChange={handleChange} className="w-full rounded-xl p-3 mt-1 bg-white">
+                <option value="" disabled hidden>
                   Select Gender
                 </option>
                 <option>Male</option>
@@ -96,48 +103,22 @@ export default function GeneratePage() {
             </div>
             <div>
               <label className="font-semibold">Age:</label>
-              <input
-                type="number"
-                placeholder="Enter your age"
-                value={age}
-                onChange={(e) => setAge(e.target.value)}
-                className="w-full rounded-xl p-3 mt-1 bg-white"
-                required
-              />
+              <input name="age" value={form.age} type="number" onChange={handleChange} placeholder="Enter your age" className="w-full rounded-xl p-3 mt-1 bg-white" />
             </div>
             <div className="flex gap-4">
               <div className="w-1/2">
-                <label className="font-semibold">Height (cm):</label>
-                <input
-                  type="text"
-                  placeholder="Enter height"
-                  value={height}
-                  onChange={(e) => setHeight(e.target.value)}
-                  className="w-full rounded-xl p-3 mt-1 bg-white"
-                  required
-                />
+                <label className="font-semibold">Height:</label>
+                <input name="height" value={form.height} type="text" onChange={handleChange} placeholder="Enter your height" className="w-full rounded-xl p-3 mt-1 bg-white" />
               </div>
               <div className="w-1/2">
-                <label className="font-semibold">Weight (kg):</label>
-                <input
-                  type="text"
-                  placeholder="Enter weight"
-                  value={weight}
-                  onChange={(e) => setWeight(e.target.value)}
-                  className="w-full rounded-xl p-3 mt-1 bg-white"
-                  required
-                />
+                <label className="font-semibold">Weight:</label>
+                <input name="weight" value={form.weight} type="text" onChange={handleChange} placeholder="Enter your weight" className="w-full rounded-xl p-3 mt-1 bg-white" />
               </div>
             </div>
             <div>
               <label className="font-semibold">Goal:</label>
-              <select
-                value={goal}
-                onChange={(e) => setGoal(e.target.value)}
-                className="w-full rounded-xl p-3 mt-1 bg-white"
-                required
-              >
-                <option value="" disabled>
+              <select name="goal" value={form.goal} onChange={handleChange} className="w-full rounded-xl p-3 mt-1 bg-white">
+                <option value="" disabled hidden>
                   Select Goal
                 </option>
                 <option>Lose Weight</option>
@@ -151,13 +132,8 @@ export default function GeneratePage() {
           <div className="flex flex-col gap-4 border-l border-green-900 pl-6">
             <div>
               <label className="font-semibold">Exercise Frequency:</label>
-              <select
-                value={activity}
-                onChange={(e) => setActivity(e.target.value)}
-                className="w-full rounded-xl p-3 mt-1 bg-white"
-                required
-              >
-                <option value="" disabled>
+              <select name="activity" value={form.activity} onChange={handleChange} className="w-full rounded-xl p-3 mt-1 bg-white">
+                <option value="" disabled hidden>
                   Select Frequency
                 </option>
                 <option>0-1 hr/week</option>
@@ -169,13 +145,8 @@ export default function GeneratePage() {
             </div>
             <div>
               <label className="font-semibold">Health Condition:</label>
-              <select
-                value={health}
-                onChange={(e) => setHealth(e.target.value)}
-                className="w-full rounded-xl p-3 mt-1 bg-white"
-                required
-              >
-                <option value="" disabled>
+              <select name="health" value={form.health} onChange={handleChange} className="w-full rounded-xl p-3 mt-1 bg-white">
+                <option value="" disabled hidden>
                   Select Health Condition
                 </option>
                 <option>None</option>
@@ -185,120 +156,29 @@ export default function GeneratePage() {
             </div>
             <div>
               <label className="font-semibold">Dietary Restriction:</label>
-              <textarea
+              <textarea name="dietary" value={form.dietary} onChange={handleChange}
                 placeholder="Enter any dietary restrictions"
-                value={dietary}
-                onChange={(e) => setDietary(e.target.value)}
                 className="w-full rounded-xl p-3 mt-1 h-28 resize-none bg-white"
               />
             </div>
           </div>
-
-          {/* Submit Button */}
-          <div className="flex justify-center md:col-span-2 mt-8">
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-10 py-3 bg-[#8b61c2] text-white rounded-full hover:bg-purple-700 font-semibold"
-            >
-              {loading ? 'Generating...' : 'Generate Meals'}
-            </button>
-          </div>
         </form>
 
-        {error && <p className="mt-4 text-red-600">{error}</p>}
-
-        {/* Print the result and the variables if available */}
-        {mealData && (
-          <div className="mt-8 bg-white p-4 rounded-xl shadow">
-            <h2 className="text-xl font-bold text-green-900 mb-4">Meal Plan Details</h2>
-            <p>
-              <span className="font-semibold">Target Calories:</span> {mealData.targetCalories}
-            </p>
-            <p>
-              <span className="font-semibold">Daily Macros:</span> Protein: {mealData.dailyMacros.protein}g, Fat: {mealData.dailyMacros.fat}g, Carbs: {mealData.dailyMacros.carbs}g
-            </p>
-
-            <div className="mt-4">
-              <h3 className="text-lg font-semibold text-green-900">Breakfast</h3>
-              <p><span className="font-semibold">Name:</span> {mealData.breakfastName}</p>
-              <p><span className="font-semibold">Calories:</span> {mealData.breakfastCalories}</p>
-              <p><span className="font-semibold">Protein:</span> {mealData.breakfastProtein}</p>
-              <p><span className="font-semibold">Fat:</span> {mealData.breakfastFat}</p>
-              <p><span className="font-semibold">Carbs:</span> {mealData.breakfastCarbs}</p>
-              <p>
-                <span className="font-semibold">Ingredients:</span>
-                <br />
-                <pre className="whitespace-pre-wrap bg-gray-100 p-2 rounded">
-                  {mealData.breakfastIngredients}
-                </pre>
-              </p>
-              <p>
-                <span className="font-semibold">Recipe:</span>
-                <br />
-                <pre className="whitespace-pre-wrap bg-gray-100 p-2 rounded">
-                  {mealData.breakfastRecipe}
-                </pre>
-              </p>
-            </div>
-
-            <div className="mt-4">
-              <h3 className="text-lg font-semibold text-green-900">Lunch</h3>
-              <p><span className="font-semibold">Name:</span> {mealData.lunchName}</p>
-              <p><span className="font-semibold">Calories:</span> {mealData.lunchCalories}</p>
-              <p><span className="font-semibold">Protein:</span> {mealData.lunchProtein}</p>
-              <p><span className="font-semibold">Fat:</span> {mealData.lunchFat}</p>
-              <p><span className="font-semibold">Carbs:</span> {mealData.lunchCarbs}</p>
-              <p>
-                <span className="font-semibold">Ingredients:</span>
-                <br />
-                <pre className="whitespace-pre-wrap bg-gray-100 p-2 rounded">
-                  {mealData.lunchIngredients}
-                </pre>
-              </p>
-              <p>
-                <span className="font-semibold">Recipe:</span>
-                <br />
-                <pre className="whitespace-pre-wrap bg-gray-100 p-2 rounded">
-                  {mealData.lunchRecipe}
-                </pre>
-              </p>
-            </div>
-
-            <div className="mt-4">
-              <h3 className="text-lg font-semibold text-green-900">Dinner</h3>
-              <p><span className="font-semibold">Name:</span> {mealData.dinnerName}</p>
-              <p><span className="font-semibold">Calories:</span> {mealData.dinnerCalories}</p>
-              <p><span className="font-semibold">Protein:</span> {mealData.dinnerProtein}</p>
-              <p><span className="font-semibold">Fat:</span> {mealData.dinnerFat}</p>
-              <p><span className="font-semibold">Carbs:</span> {mealData.dinnerCarbs}</p>
-              <p>
-                <span className="font-semibold">Ingredients:</span>
-                <br />
-                <pre className="whitespace-pre-wrap bg-gray-100 p-2 rounded">
-                  {mealData.dinnerIngredients}
-                </pre>
-              </p>
-              <p>
-                <span className="font-semibold">Recipe:</span>
-                <br />
-                <pre className="whitespace-pre-wrap bg-gray-100 p-2 rounded">
-                  {mealData.dinnerRecipe}
-                </pre>
-              </p>
-            </div>
-
-            <div className="mt-4">
-              <h3 className="text-lg font-semibold text-green-900">Raw Meal Plan Response</h3>
-              <textarea
-                readOnly
-                rows={10}
-                className="w-full rounded-xl p-3 mt-1 bg-gray-100 text-green-900"
-                value={mealData.rawMealPlanText}
-              />
-            </div>
-          </div>
-        )}
+        {/* Submit Button */}
+        <div className="flex justify-center mt-8">
+          {/* <button
+            onClick={() => router.push('/option')}
+            className="px-10 py-3 bg-[#8b61c2] text-white rounded-full hover:bg-purple-700 font-semibold"
+          >
+            Generate Meals
+          </button> */}
+          <button
+            onClick={handleSubmit}
+            className="px-10 py-3 bg-[#8b61c2] text-white rounded-full hover:bg-purple-700 font-semibold"
+          >
+            {loading ? 'Generating...' : 'Generate Meals'}
+          </button>
+        </div>
       </div>
     </main>
   );
